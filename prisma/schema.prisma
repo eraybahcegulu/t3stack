@@ -14,10 +14,17 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
+model Todo {
     id        Int      @id @default(autoincrement())
     name      String
     createdAt DateTime @default(now())
+
+    inProgress    Boolean   @default(true)
+    isFocused    Boolean   @default(false)
+    isCompleted    Boolean   @default(false)
+    completedAt DateTime?
+    isEdited    Boolean   @default(false)
+
     updatedAt DateTime @updatedAt
 
     createdBy   User   @relation(fields: [createdById], references: [id])
@@ -61,7 +68,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    posts         Post[]
+    todos         Todo[]
 }
 
 model VerificationToken {
