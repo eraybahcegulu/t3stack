@@ -6,10 +6,16 @@ import { ChangeTodoStatus } from './ChangeTodoStatus';
 import { CompleteTodo } from './CompleteTodo';
 import { DeleteTodo } from './DeleteTodo';
 import { Popover } from 'antd';
+import { useState } from 'react';
+import { EditTodo } from './EditTodo';
 
 export function GetAllTodos() {
-
+    const [editingTodoId, setEditingTodoId] = useState<number | null>(null);
     const { data, isLoading: todosLoading } = api.todo.getAll.useQuery();
+
+    const handleEditing = (id: number) => {
+        setEditingTodoId(id);
+    }
     return (
         <div className='h-full overflow-y-auto flex flex-col gap-9 pr-4'>
             {
@@ -47,7 +53,7 @@ export function GetAllTodos() {
                                         <div className='p-4 h-full'>
 
                                             <span className="text-blue-600 ">
-                                                <Popover placement="top" content={`Completed Date: ${todo.completedAt}`}>
+                                                <Popover placement="top" content={`Completed Date: ${todo.completedAt ? todo.completedAt.toLocaleString() : 'Not completed'}`}>
                                                     <InfoCircleOutlined
                                                         className={`xl:text-4xl  hover:scale-125 transition-all `} />
                                                 </Popover>
@@ -60,7 +66,7 @@ export function GetAllTodos() {
                                 }
 
                                 <div className='p-4 h-full text-black'>
-                                <Popover placement="top" content={`Created Date: ${todo.createdAt.toLocaleString()}`}>
+                                    <Popover placement="top" content={`Created Date: ${todo.createdAt.toLocaleString()}`}>
                                         <InfoCircleOutlined
                                             className={`xl:text-4xl  hover:scale-125 transition-all `} />
                                     </Popover>
@@ -68,14 +74,32 @@ export function GetAllTodos() {
                             </div>
 
                             <div className={`p-4 min-w-[200px] break-all border-r border-l mx-4 grow xl:text-xl 
-                            ${todo.isCompleted && 'opacity-25 text-2xl'}`}>
-                                {todo.name}
+                            ${todo.isCompleted && editingTodoId !==todo.id && 'opacity-25 text-2xl'}`}>
+
+                                {
+                                    editingTodoId === todo.id
+                                        ?
+                                        <EditTodo todoId={editingTodoId} existName={todo.name} setEditingTodoId={setEditingTodoId} />
+                                        :
+                                        todo.name
+
+                                }
+
                             </div>
 
                             <DeleteTodo todoId={todo.id} />
 
-                            <div className='p-4 h-full xl:text-4xl text-blue-600 hover:scale-125 transition-all cursor-pointer'>
-                                <EditOutlined />
+                            <div className='p-4 h-full '>
+                                <span className='text-blue-600'>
+                                    {
+                                        editingTodoId
+                                            ?
+                                            <EditOutlined className='xl:text-4xl opacity-25' />
+                                            :
+                                            <EditOutlined onClick={() => handleEditing(todo.id)} className='xl:text-4xl hover:scale-125 transition-all cursor-pointer' />
+                                    }
+
+                                </span>
                             </div>
 
                         </div>

@@ -7,7 +7,7 @@ import {
 
 export const todoRouter = createTRPCRouter({
     create: protectedProcedure
-        .input(z.object({ name: z.string().min(1, { message: 'Cannot be empty' }).max(150, { message: 'Max length 150 characters' }) }))
+        .input(z.object({ name: z.string().min(1, { message: 'Cannot be empty' }).max(200, { message: 'Max length 200 characters' }) }))
         .mutation(async ({ ctx, input }) => {
             await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -182,5 +182,35 @@ export const todoRouter = createTRPCRouter({
                 },
             });
             return { message: `Completed todos deleted` };
+        }),
+
+    edit: protectedProcedure
+        .input(z.object({ todoId: z.number().min(1) }))
+        .input(z.object({ name: z.string().min(1, { message: 'Cannot be empty' }).max(200, { message: 'Max length 200 characters' }) }))
+        .mutation(async ({ ctx, input }) => {
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            const todo = await ctx.db.todo.findFirst({
+                where: {
+                    createdById: ctx.session.user.id,
+                    id: input.todoId
+                }
+            })
+
+            if (!todo) {
+                return { error: `Todo not found` };
+            }
+
+            await ctx.db.todo.update({
+                where: {
+                    createdById: ctx.session.user.id,
+                    id: input.todoId
+                },
+                data: {
+                    name: input.name
+                }
+            })
+
+            return { message: `Todo edited` };
         }),
 });
