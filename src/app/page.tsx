@@ -9,6 +9,7 @@ import SignIn from "./_components/Buttons/SignIn";
 import { CompletedTodosCount, FocusedTodosCount, GetAllTodos, TodosCount } from "./_components/GetAllTodos";
 import { DeleteAllTodos } from "./_components/DeleteAllTodos";
 import { DeleteCompleted } from "./_components/DeleteCompleted";
+import SignOut from "./_components/Buttons/SignOut";
 
 
 export default async function Home() {
@@ -24,8 +25,12 @@ export default async function Home() {
           ?
           <div className="flex flex-col min-h-screen min-w-[50%] max-w-[400px] justify-start m-10 p-10 gap-10">
 
-            <div className="flex justify-center">
-              <h1 className="text-3xl">TODO APP</h1>
+            <div className="flex flex-col justify-center items-center">
+              <h1 className="text-2xl"> TODO APP</h1>
+              <h4 > <span className="opacity-25">{session.user.email} </span> welcome</h4>
+              <div className="flex justify-center ">
+                <SignOut />
+              </div>
             </div>
 
             <CreateTodo />
@@ -49,7 +54,6 @@ export default async function Home() {
                 <DeleteCompleted />
               </div>
             </div>
-
 
           </div>
           :

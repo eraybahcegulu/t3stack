@@ -21,7 +21,12 @@ export function DeleteCompleted() {
             }
         },
         onError: (error) => {
-            toast.error(error.message)
+            const errorMessage = error.data?.zodError?.fieldErrors.name;
+            if (errorMessage?.[0]) {
+                toast.error(errorMessage[0]);
+            } else {
+                toast.error(error.message);
+            }
         }
     });
 

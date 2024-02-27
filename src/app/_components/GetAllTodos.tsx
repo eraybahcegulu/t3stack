@@ -11,7 +11,7 @@ export function GetAllTodos() {
 
     const { data, isLoading: todosLoading } = api.todo.getAll.useQuery();
     return (
-        <div className='h-full overflow-y-auto flex flex-col gap-10 pr-4'>
+        <div className='h-full overflow-y-auto flex flex-col gap-9 pr-4'>
             {
                 todosLoading && (
                     <LoadingSpinner />
@@ -105,10 +105,11 @@ export function CompletedTodosCount() {
 }
 
 export function FocusedTodosCount() {
-
     const { data } = api.todo.getAll.useQuery();
-    const FocusedTodosCount = data?.filter(todo => todo.isFocused).length;
+    const NotCompletedTodos = data?.filter(todo => !todo.isCompleted);
+    const FocusedTodosCount = NotCompletedTodos?.filter(todo => todo.isFocused).length;
+
     return (
-        <span> {FocusedTodosCount} </span>
-    )
+        <span>{FocusedTodosCount}</span>
+    );
 }
